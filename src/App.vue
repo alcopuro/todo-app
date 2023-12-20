@@ -1,29 +1,22 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import NavigationHeader from "@/components/NavigationHeader.vue";
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <nav class="navigation">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/contact">Contact</RouterLink>
-        <RouterLink to="/impressum">Impressum</RouterLink>
-      </nav>
-    </div>
+    <NavigationHeader />
   </header>
-
-  <RouterView />
+  <main class="centered">
+    <RouterView />
+  </main>
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
   max-height: 100vh;
-}
-
-.navigation {
-  display: flex;
-  gap: 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e3e3e3;
 }
 </style>

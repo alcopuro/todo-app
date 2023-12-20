@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <div>HomeView.vue works!</div>
+    <div>My tasks</div>
   </div>
 </template>
 
