@@ -1,8 +1,12 @@
-<script lang="ts" setup></script>
+<script setup>
+import TasksOverview from "../components/TasksOverview.vue";
+</script>
 
 <template>
   <div>
-    <div>My tasks</div>
+    <Suspense>
+      <TasksOverview></TasksOverview>
+    </Suspense>
   </div>
 </template>
 

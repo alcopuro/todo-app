@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import IconTemplate from "./icons/IconTemplate.vue";
 
 const userName = ref("Max Mustermann");
 
@@ -18,8 +19,11 @@ const initialsOfUserName = computed(() => {
       <RouterLink to="/">My Tasks</RouterLink>
       <RouterLink to="/archive">Archive</RouterLink>
     </nav>
-    <div class="desktop">Max Mustermann</div>
-    <div class="mobile">{{ initialsOfUserName }}</div>
+    <div class="name">
+      <IconTemplate class="icon"></IconTemplate>
+      <div class="desktop">Max Mustermann</div>
+      <div class="mobile">{{ initialsOfUserName }}</div>
+    </div>
   </div>
 </template>
 
@@ -31,18 +35,43 @@ const initialsOfUserName = computed(() => {
   .navigation {
     display: flex;
     gap: 2rem;
-  }
+    font-size: 24px;
+    a {
+      font-weight: 700;
+      color: #b0b0b0;
+      transition: color 0.4s ease;
 
-  .desktop {
-    display: none;
-    @media (min-width: 640px) {
-      display: block;
+      &.router-link-exact-active {
+        color: #4797ff;
+      }
     }
   }
-  .mobile {
-    display: block;
-    @media (min-width: 640px) {
+
+  .name {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    .icon {
+      height: 20px;
+    }
+
+    .desktop,
+    .mobile {
+      font-weight: 700;
+    }
+
+    .desktop {
       display: none;
+      @media (min-width: 640px) {
+        display: block;
+      }
+    }
+    .mobile {
+      display: block;
+      @media (min-width: 640px) {
+        display: none;
+      }
     }
   }
 }
