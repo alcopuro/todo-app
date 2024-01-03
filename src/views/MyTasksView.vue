@@ -5,7 +5,9 @@ import TasksOverview from "../components/TasksOverview.vue";
 <template>
   <div>
     <Suspense>
-      <TasksOverview></TasksOverview>
+      <TasksOverview>
+        <template #heading>Your open Tasks </template>
+      </TasksOverview>
     </Suspense>
   </div>
 </template>
