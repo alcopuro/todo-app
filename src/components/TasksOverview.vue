@@ -1,9 +1,10 @@
 <script setup>
-const props = withDefaults(defineProps(), {
-  archive: false,
+const props = defineProps({
+  archive: {
+    type: Boolean,
+    required: false,
+  },
 });
-console.log("test");
-console.log(props.archive);
 
 const endpoint = "https://jsonplaceholder.typicode.com/todos/?userId=1";
 
@@ -11,9 +12,9 @@ const response = await fetch(endpoint, { method: "GET" });
 
 const data = await response.json();
 
-const tasks = data.filter((task) => {
-  return !task.completed;
-});
+const tasks = data.filter((task) =>
+  props.archive ? task.completed : !task.completed
+);
 </script>
 
 <template>

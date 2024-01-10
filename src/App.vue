@@ -11,12 +11,3 @@ import NavigationHeader from "@/components/NavigationHeader.vue";
     <RouterView />
   </main>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e3e3e3;
-}
-</style>
