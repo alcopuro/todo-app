@@ -1,27 +1,29 @@
 <script setup>
+import { useTaskStore } from "@/stores/task";
+
 const props = defineProps({
-  archive: {
-    type: Boolean,
-    required: false,
+  tasks: {
+    type: Array,
+    required: true,
   },
 });
 
-const endpoint = "https://jsonplaceholder.typicode.com/todos/?userId=1";
+const taskStore = useTaskStore();
 
-const response = await fetch(endpoint, { method: "GET" });
-
-const data = await response.json();
-
-const tasks = data.filter((task) =>
-  props.archive ? task.completed : !task.completed
-);
+const toggleTask = (task) => {
+  taskStore.toggleTask(task);
+};
 </script>
 
 <template>
   <div>
-    <slot name="heading"></slot> ({{ tasks.length }})
+    <slot name="heading"></slot> ({{ props.tasks.length }})
     <div class="task-list">
-      <div class="task-list__item" v-for="task in tasks">
+      <div
+        class="task-list__item"
+        v-for="task in props.tasks"
+        @click="toggleTask(task)"
+      >
         <input type="checkbox" />
         <span>{{ task.title }}</span>
       </div>
