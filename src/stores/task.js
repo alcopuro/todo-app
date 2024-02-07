@@ -4,9 +4,11 @@ import { defineStore } from 'pinia'
 export const useTaskStore = defineStore('task', () => {
   const tasks = ref([])
 
-  const openTasks = computed(() => tasks.value.filter((task) => !task.completed))
+  const sortedTasks = computed(() => tasks.value.sort((a,b) =>  b.id - a.id))
 
-  const completedTasks = computed(() => tasks.value.filter((task) => task.completed))
+  const openTasks = computed(() => sortedTasks.value.filter((task) => !task.completed))
+
+  const completedTasks = computed(() => sortedTasks.value.filter((task) => task.completed))
   
   async function fetchTasks() {
     const endpoint = "https://jsonplaceholder.typicode.com/todos/?userId=1";
@@ -17,9 +19,20 @@ export const useTaskStore = defineStore('task', () => {
     tasks.value = data
   }
 
-  function toggleTask(task) {
+  function toggleTask(taskId) {
+    const task = tasks.value.find((task) => task.id === taskId)
     task.completed = !task.completed
   }
 
-  return { fetchTasks, openTasks, completedTasks, toggleTask }
+  function addTask(title) {
+
+    const allIds = tasks.value.map((task)=> task.id)
+    tasks.value.push({
+      title: title,
+      completed: false,
+      id: Math.max(...allIds) + 1
+    })
+  }
+
+  return { fetchTasks, openTasks, completedTasks, toggleTask, addTask }
 })
