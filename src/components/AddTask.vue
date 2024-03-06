@@ -41,6 +41,11 @@ h3 {
     display: flex;
     gap: 1rem;
     height: 40px;
+
+    input {
+      width: 250px;
+    }
+
     input,
     button {
       padding: 0.5rem;

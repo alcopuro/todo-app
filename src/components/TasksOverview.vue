@@ -1,6 +1,7 @@
 <script setup>
 import { useTaskStore } from "@/stores/task";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import IconSearch from "./icons/IconSearch.vue";
 
 const props = defineProps({
   tasks: {
@@ -11,23 +12,48 @@ const props = defineProps({
 
 const tasks = computed(() => props.tasks);
 
+const filteredTasks = computed(() => filterTasks());
+
+const searchTerm = ref("");
+
 const taskStore = useTaskStore();
 
 const toggleTask = (taskId) => {
   taskStore.toggleTask(taskId);
 };
+const filterTasks = () => {
+  if (searchTerm.value) {
+    return tasks.value.filter((task) => {
+      let regexPattern = searchTerm.value.split("").join(".*?");
+      let regex = new RegExp(regexPattern);
+      return task.title.match(regex);
+    });
+  }
+  return tasks.value;
+};
 </script>
 
 <template>
-  <div>
+  <div class="tasks-overview">
     <h3><slot name="heading"></slot> ({{ tasks.length }})</h3>
+    <div class="search-wrapper">
+      <input
+        class="input-search"
+        type="text"
+        placeholder="Search for a task..."
+        v-model="searchTerm"
+        @input="filterTasks()"
+      />
+      <IconSearch class="icon-search"></IconSearch>
+    </div>
+
     <div class="task-list">
       <div
         :class="[
           'task-list__item',
           { 'task-list__item--completed': task.completed },
         ]"
-        v-for="task in tasks"
+        v-for="task in filteredTasks"
         :key="task.id"
       >
         <input
@@ -48,43 +74,63 @@ h3 {
   font-weight: bold;
 }
 
-.task-list {
-  margin-top: 2rem;
-  display: grid;
+.tasks-overview {
+  .search-wrapper {
+    position: relative;
+    width: 250px;
 
-  gap: 2rem;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  grid-auto-rows: 100px;
-
-  &__item {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-
-    border: 2px #e3e3e3 solid;
-    border-radius: 8px;
-    padding: 1rem;
-    background-color: white;
-
-    &:hover {
-      border-color: #58a0ff;
+    .input-search {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 2px #e3e3e3 solid;
     }
+    .icon-search {
+      position: absolute;
+      top: 22px;
+      right: 10px;
+      height: 25px;
+    }
+  }
+  .task-list {
+    margin-top: 2rem;
+    display: grid;
 
-    &--completed {
-      span {
-        text-decoration: line-through;
-        &:hover {
-          text-decoration: none;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-auto-rows: 100px;
+
+    &__item {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+
+      border: 2px #e3e3e3 solid;
+      border-radius: 8px;
+      padding: 1rem;
+      background-color: white;
+
+      &:hover {
+        border-color: #58a0ff;
+      }
+
+      &--completed {
+        span {
+          text-decoration: line-through;
+          &:hover {
+            text-decoration: none;
+          }
         }
       }
-    }
-    span:hover {
-      text-decoration: line-through;
-    }
+      span:hover {
+        text-decoration: line-through;
+      }
 
-    input,
-    label {
-      cursor: pointer;
+      input,
+      label {
+        cursor: pointer;
+      }
     }
   }
 }
