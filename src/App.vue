@@ -7,8 +7,8 @@ import { onMounted } from "vue";
 
 const taskStore = useTaskStore();
 
-onMounted(async () => {
-  await taskStore.fetchTasks();
+onMounted(() => {
+  taskStore.fetchTasks();
 });
 </script>
 

@@ -1,38 +1,48 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase Client initialisieren
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const useTaskStore = defineStore('task', () => {
-  const tasks = ref([])
+  const tasks = ref([]);
 
-  const sortedTasks = computed(() => tasks.value.sort((a,b) =>  b.id - a.id))
+  const sortedTasks = computed(() => tasks.value.sort((a, b) => b.id - a.id));
+  const openTasks = computed(() => sortedTasks.value.filter((task) => !task.completed));
+  const completedTasks = computed(() => sortedTasks.value.filter((task) => task.completed));
 
-  const openTasks = computed(() => sortedTasks.value.filter((task) => !task.completed))
-
-  const completedTasks = computed(() => sortedTasks.value.filter((task) => task.completed))
-  
   async function fetchTasks() {
-    const endpoint = "https://jsonplaceholder.typicode.com/todos/?userId=1";
+    let { data: tasksData, error } = await supabase
+      .from('tasks')
+      .select('*')
+      .order('id', { ascending: false });
 
-    const response = await fetch(endpoint, { method: "GET" });
-
-    const data = await response.json();
-    tasks.value = data
+    if (error) console.error('error', error);
+    else tasks.value = tasksData;
   }
 
-  function toggleTask(taskId) {
-    const task = tasks.value.find((task) => task.id === taskId)
-    task.completed = !task.completed
+  async function toggleTask(taskId) {
+    const task = tasks.value.find((task) => task.id === taskId);
+    let { data, error } = await supabase
+      .from('tasks')
+      .update({ completed: !task.completed })
+      .eq('id', taskId);
+
+    if (error) console.error('error', error);
+    else fetchTasks(); // Aktualisiere die lokalen Tasks nach dem Update
   }
 
-  function addTask(title) {
+  async function addTask(title) {
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert([{ title: title, completed: false }]);
 
-    const allIds = tasks.value.map((task)=> task.id)
-    tasks.value.push({
-      title: title,
-      completed: false,
-      id: Math.max(...allIds) + 1
-    })
+    if (error) console.error('error', error);
+    else fetchTasks(); // Tasks neu laden, um die neue Aufgabe anzuzeigen
   }
 
-  return { fetchTasks, openTasks, completedTasks, toggleTask, addTask }
-})
+  return { fetchTasks, openTasks, completedTasks, toggleTask, addTask };
+});
