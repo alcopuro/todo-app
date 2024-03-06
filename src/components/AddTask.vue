@@ -23,7 +23,7 @@ const addTask = () => {
         v-model="title"
         @keyup.enter="addTask"
       />
-      <button>ADD</button>
+      <button @click="addTask">ADD</button>
     </div>
   </div>
 </template>
